@@ -1,0 +1,19 @@
+{
+  "name": "productmanager-api",
+  "version": "1.0.0",
+  "description": "API REST CRUD para gestionar un inventario de productos (Node.js, Express y PostgreSQL)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}

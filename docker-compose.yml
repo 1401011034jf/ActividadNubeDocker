@@ -1,0 +1,46 @@
+
+services:
+  api:
+    build: .
+    container_name: productmanager_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - productmanager_network
+
+  db:
+    image: postgres:16-alpine
+    container_name: productmanager_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-productmanager}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Configura DB_PASSWORD en .env}
+    volumes:
+      - productmanager_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    networks:
+      - productmanager_network
+
+volumes:
+  productmanager_data:
+
+networks:
+  productmanager_network:
+    driver: bridge
